@@ -5,6 +5,9 @@ Based on : https://github.com/fastify/fastify/issues/2683
 
 ## Usage
 
+- `eh.inject`: the array passed is directly writte on the socket of the response.
+- `eh.add`: the buffer of all additions during the lifecycle of the request is serialized on the `onSend` hook.
+
 ```javascript
 const Fastify = require("fastify");
 const eh = require("./");
