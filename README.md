@@ -7,7 +7,6 @@ Based on : https://github.com/fastify/fastify/issues/2683
 
 ```javascript
 const Fastify = require("fastify");
-const { realpathSync } = require("fs");
 const eh = require("./");
 
 const fastify = Fastify({ logger: true });
