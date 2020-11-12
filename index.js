@@ -51,7 +51,9 @@ function formatEntry(e) {
       }
     }
   }
-  return `Link: <${e.href}>; rel=${e.rel};${_as}${_cors}`;
+  return `Link: <${e.href}>; rel=${e.rel}${
+    !_as.length && !_cors.length ? "" : ";"
+  }${_as}${_cors}`;
 }
 
 function fastifyEH(fastify, opts, next) {

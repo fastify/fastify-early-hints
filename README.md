@@ -58,7 +58,7 @@ Link: </style.css>; rel=preload; as=style
 Link: </script.js>; rel=preload; as=script
 Link: <//example.com>; rel=preload; as=style
 Link: <//example.com>; rel=preload; as=style; crossorigin
-Link: <//example.com>; rel=preconnect;
+Link: <//example.com>; rel=preconnect
 Link: <//example2.com>; rel=preconnect; crossorigin
 Link: <//example3.com>; rel=preconnect; crossorigin=use-credentials
 
