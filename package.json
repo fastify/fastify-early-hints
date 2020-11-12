@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/zekth/fastify-early-hints#readme",
   "dependencies": {
-    "fastify-plugin": "^3.0.0"
+    "fastify-error": "^0.2.0",
+    "fastify-plugin": "^3.0.0",
+    "fastify-warning": "^0.2.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.7",

@@ -1,6 +1,7 @@
 "use strict";
 
 const fp = require("fastify-plugin");
+const warning = require("fastify-warning")();
 
 const allowedRel = [
   "dns-prefetch",
@@ -10,12 +11,27 @@ const allowedRel = [
   "prerender",
 ];
 const allowedAs = ["document", "script", "image", "style"];
+const allowedCors = ["anonymous", "use-credentials"];
+
+const WARNING_NAME = "FastifWarningEarlyHints";
+warning.create(WARNING_NAME, "FSTEH001", "as attribute invalid.");
+warning.create(WARNING_NAME, "FSTEH002", "cors attribute invalid.");
 
 function formatEntry(e) {
   if (typeof e === "string") return e;
+  if (e.href === undefined) {
+    throw Error("href attribute is mandatory");
+  }
+  if (e.rel === undefined) {
+    throw Error("rel attribute is mandatory");
+  }
+
   let _as = "";
   let _cors = "";
   if (e.as !== undefined) {
+    if (!allowedAs.includes(e.as)) {
+      warning.emit("FSTEH001");
+    }
     _as = ` as=${e.as}`;
     if (e.cors !== undefined) {
       _as += ";";
@@ -30,7 +46,11 @@ function formatEntry(e) {
     if (typeof e.cors === "boolean") {
       _cors += "crossorigin";
     } else if (typeof e.cors === "string") {
-      _cors += `crossorigin=${e.cors}`;
+      if (allowedCors.includes(e.cors)) {
+        _cors += `crossorigin=${e.cors}`;
+      } else {
+        warning.emit("FSTEH002");
+      }
     }
   }
   return `Link: <${e.href}>; rel=${e.rel};${_as}${_cors}`;
