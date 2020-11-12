@@ -40,9 +40,7 @@ function formatEntry(e) {
     }
   }
   if (e.cors !== undefined) {
-    if (e.as === undefined) {
-      _cors += " ";
-    }
+    _cors += " ";
     if (typeof e.cors === "boolean") {
       _cors += "crossorigin";
     } else if (typeof e.cors === "string") {
