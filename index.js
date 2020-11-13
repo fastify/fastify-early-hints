@@ -2,7 +2,6 @@
 
 const fp = require('fastify-plugin')
 const warning = require('fastify-warning')()
-
 const allowedRel = [
   'dns-prefetch',
   'preconnect',
@@ -20,21 +19,16 @@ warning.create(WARNING_NAME, 'FSTEH003', 'rel attribute invalid.')
 
 function formatEntry (e) {
   if (typeof e === 'string') return e
-  if (e.href === undefined) {
-    throw Error('href attribute is mandatory')
-  }
-  if (e.rel === undefined) {
-    throw Error('rel attribute is mandatory')
-  }
-  if (!allowedRel.includes(e.rel)) {
-    warning.emit('FSTEH003')
-  }
+  if (e.href === undefined) throw Error('href attribute is mandatory')
+  if (e.rel === undefined) throw Error('rel attribute is mandatory')
+
+  if (!allowedRel.includes(e.rel)) warning.emit('FSTEH003')
+
   let _as = ''
   let _cors = ''
   if (e.as !== undefined) {
-    if (!allowedAs.includes(e.as)) {
-      warning.emit('FSTEH001')
-    }
+    if (!allowedAs.includes(e.as)) warning.emit('FSTEH001')
+
     _as = ` as=${e.as}`
     if (e.cors !== undefined) {
       _as += ';'
@@ -60,6 +54,8 @@ function formatEntry (e) {
 }
 
 function fastifyEH (fastify, opts, next) {
+  if (fastify.initialConfig.http2 === true) return next(new Error('Early Hints cannot be used with a HTTP2 server.'))
+
   function earlyhints (reply) {
     const buffer = []
     const serialize = function (c) {
