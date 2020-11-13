@@ -3,6 +3,11 @@
 Draft proposal of plugin handling the HTTP 103 code.
 Based on : https://github.com/fastify/fastify/issues/2683
 
+## Install
+```
+npm i fastify-early-hints
+```
+
 ## Usage
 
 - `eh.inject`: the array passed is directly writte on the socket of the response.
@@ -16,7 +21,7 @@ const fastify = Fastify({ logger: true });
 fastify.register(eh);
 
 fastify.get("/", async (request, reply) => {
-  reply.eh.inject([
+  await reply.eh.inject([
     "Link: </style.css>; rel=preload; as=style",
     "Link: </script.js>; rel=preload; as=script",
   ]);
@@ -77,7 +82,11 @@ Connection: keep-alive
 - Investigate on pipelining the message to the socket
 - improve tests
 
-ref:
+## References
 
 - https://httpwg.org/specs/rfc8297.html
 - https://www.w3.org/TR/resource-hints/
+
+## License
+
+Licensed under [MIT](./LICENSE).<br/>
