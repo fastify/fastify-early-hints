@@ -1,5 +1,10 @@
 # Fastify Early Hints
 
+
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)
+![Continuous
+Integration](https://github.com/zekth/fastify-early-hints/workflows/CI%20workflow/badge.svg)
+
 Draft proposal of plugin handling the HTTP 103 code.
 Based on : https://github.com/fastify/fastify/issues/2683
 
@@ -15,7 +20,7 @@ npm i fastify-early-hints
 
 ```javascript
 const Fastify = require("fastify");
-const eh = require("./");
+const eh = require("fastify-early-hints");
 
 const fastify = Fastify({ logger: true });
 fastify.register(eh);
