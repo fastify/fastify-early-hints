@@ -25,15 +25,11 @@ const fastify = Fastify({ logger: true });
 fastify.register(eh);
 
 fastify.get("/", async (request, reply) => {
+  reply.eh.add([
+    "Link: </style.css>; rel=preload; as=style",
+    "Link: </script.js>; rel=preload; as=script",
+  ]);
   await reply.eh.add([
-    "Link: </style.css>; rel=preload; as=style",
-    "Link: </script.js>; rel=preload; as=script",
-  ]);
-  reply.eh.add([
-    "Link: </style.css>; rel=preload; as=style",
-    "Link: </script.js>; rel=preload; as=script",
-  ]);
-  reply.eh.add([
     { href: "//example.com", rel: "preload", as: "style" },
     { href: "//example.com", rel: "preload", as: "style", cors: true },
     { href: "//example.com", rel: "preconnect" },

@@ -1,6 +1,6 @@
 {
   "name": "fastify-early-hints",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Fastify Early Hints",
   "main": "index.js",
   "types": "index.d.ts",
