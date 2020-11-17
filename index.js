@@ -9,8 +9,9 @@ const allowedRel = [
   'preload',
   'prerender'
 ]
-const allowedAs = ['document', 'script', 'image', 'style']
+const allowedAs = ['document', 'script', 'image', 'style', 'font']
 const allowedCors = ['anonymous', 'use-credentials']
+const CRLF = '\r\n'
 
 const WARNING_NAME = 'FastifWarningEarlyHints'
 warning.create(WARNING_NAME, 'FSTEH001', 'as attribute invalid.')
@@ -54,16 +55,18 @@ function formatEntry (e) {
 }
 
 function fastifyEH (fastify, opts, next) {
-  if (fastify.initialConfig.http2 === true) { return next(new Error('Early Hints cannot be used with a HTTP2 server.')) }
+  if (fastify.initialConfig.http2 === true) {
+    return next(new Error('Early Hints cannot be used with a HTTP2 server.'))
+  }
 
   function earlyhints (reply) {
     const promiseBuffer = []
     const serialize = function (c) {
-      let message = 'HTTP/1.1 103 Early Hints\r\n'
+      let message = `HTTP/1.1 103 Early Hints${CRLF}`
       for (let i = 0; i < c.length; i++) {
-        message += `${formatEntry(c[i])}\r\n`
+        message += `${formatEntry(c[i])}${CRLF}`
       }
-      return `${message}\r\n`
+      return `${message}${CRLF}`
     }
     return {
       close: async function () {
