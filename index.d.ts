@@ -7,8 +7,7 @@ export interface earlyHintItem {
   as?: string;
 }
 export interface earlyHint {
-  add: (content: string[] | earlyHintItem[]) => void;
-  inject: (content: string[] | earlyHintItem[]) => Promise<void>;
+  add: (content: string[] | earlyHintItem[]) => Promise<void>;
 }
 
 declare module "fastify" {

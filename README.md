@@ -15,8 +15,7 @@ npm i fastify-early-hints
 
 ## Usage
 
-- `eh.inject`: the array passed is directly writte on the socket of the response.
-- `eh.add`: the buffer of all additions during the lifecycle of the request is serialized on the `onSend` hook.
+- `eh.add`: Every call writes to the socket and returns a promise. Altought all the promises created throught the reply lifecycle are awaited in the `onSend` hook.
 
 ```javascript
 const Fastify = require("fastify");
@@ -26,7 +25,7 @@ const fastify = Fastify({ logger: true });
 fastify.register(eh);
 
 fastify.get("/", async (request, reply) => {
-  await reply.eh.inject([
+  await reply.eh.add([
     "Link: </style.css>; rel=preload; as=style",
     "Link: </script.js>; rel=preload; as=script",
   ]);
@@ -84,7 +83,6 @@ Connection: keep-alive
 ## Todo
 
 - Handling different cases combinations
-- Investigate on pipelining the message to the socket
 - improve tests
 
 ## References

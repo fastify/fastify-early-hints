@@ -8,8 +8,7 @@ const runServer = async () => {
   app.register(fastifyEH)
   app.post('/', async (req, reply: FastifyReply) => {
     expectType<earlyHint>(reply.eh)
-    expectType<Promise<void>>(reply.eh.inject(['FOO']))
-    expectType<void>(reply.eh.add(['FOO']))
+    expectType<Promise<void>>(reply.eh.add(['FOO']))
     reply.send()
   })
 

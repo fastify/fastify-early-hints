@@ -54,10 +54,10 @@ function formatEntry (e) {
 }
 
 function fastifyEH (fastify, opts, next) {
-  if (fastify.initialConfig.http2 === true) return next(new Error('Early Hints cannot be used with a HTTP2 server.'))
+  if (fastify.initialConfig.http2 === true) { return next(new Error('Early Hints cannot be used with a HTTP2 server.')) }
 
   function earlyhints (reply) {
-    const buffer = []
+    const promiseBuffer = []
     const serialize = function (c) {
       let message = 'HTTP/1.1 103 Early Hints\r\n'
       for (let i = 0; i < c.length; i++) {
@@ -66,37 +66,21 @@ function fastifyEH (fastify, opts, next) {
       return `${message}\r\n`
     }
     return {
-      close: function (cb) {
-        if (buffer.length) {
-          if (reply.raw.socket) {
-            reply.raw.socket.write(serialize(buffer), 'utf-8', cb)
-          } else {
-            reply.raw.write(serialize(buffer), 'utf-8', cb)
-          }
-        } else {
-          cb()
+      close: async function () {
+        if (promiseBuffer.length) {
+          await Promise.all(promiseBuffer)
         }
       },
-      // directly write to the socket
-      // usefull when long runner request flow
-      inject: async function (content) {
-        await new Promise((resolve) => {
+      add: function (content) {
+        const p = new Promise((resolve) => {
           if (reply.raw.socket) {
-            reply.raw.socket.write(serialize(content), 'utf-8', () => {
-              resolve()
-            })
+            reply.raw.socket.write(serialize(content), 'utf-8', resolve)
           } else {
-            reply.raw.write(serialize(content), 'utf-8', () => {
-              resolve()
-            })
+            reply.raw.write(serialize(content), 'utf-8', resolve)
           }
         })
-      },
-      // write to the socket on the onSend hook
-      add: function (content) {
-        for (let i = 0; i < content.length; i++) {
-          buffer.push(content[i])
-        }
+        promiseBuffer.push(p)
+        return p
       }
     }
   }
@@ -106,11 +90,9 @@ function fastifyEH (fastify, opts, next) {
     done()
   }
 
-  function onSend (request, reply, payload, done) {
+  async function onSend (request, reply, payload) {
     if (reply.eh) {
-      reply.eh.close(done)
-    } else {
-      done()
+      await reply.eh.close()
     }
   }
 
