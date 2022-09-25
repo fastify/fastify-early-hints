@@ -1,16 +1,16 @@
-# Fastify Early Hints
+# @fastify/early-hints
 
 
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](http://standardjs.com/)
 ![Continuous
-Integration](https://github.com/zekth/fastify-early-hints/workflows/CI%20workflow/badge.svg)
+Integration](https://github.com/fastify/fastify-early-hints/workflows/CI%20workflow/badge.svg)
 
 Draft proposal of plugin handling the HTTP 103 code.
 Based on : https://github.com/fastify/fastify/issues/2683
 
 ## Install
 ```
-npm i fastify-early-hints
+npm i @fastify/early-hints
 ```
 
 ## Usage
@@ -19,7 +19,7 @@ npm i fastify-early-hints
 
 ```javascript
 const Fastify = require("fastify");
-const eh = require("fastify-early-hints");
+const eh = require("@fastify/early-hints");
 
 const fastify = Fastify({ logger: true });
 fastify.register(eh);
@@ -41,7 +41,7 @@ fastify.get("/", async (request, reply) => {
 
 const start = async () => {
   try {
-    await fastify.listen(3000);
+    await fastify.listen({ port: 3000 });
     fastify.log.info(`server listening on ${fastify.server.address().port}`);
   } catch (err) {
     fastify.log.error(err);
@@ -88,4 +88,4 @@ Connection: keep-alive
 
 ## License
 
-Licensed under [MIT](./LICENSE).<br/>
+Licensed under [MIT](./LICENSE).

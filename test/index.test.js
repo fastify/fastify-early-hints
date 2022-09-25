@@ -17,12 +17,12 @@ test('Should add Early Hints headers', (t) => {
     ])
     return { hello: 'world' }
   })
-  fastify.listen(3000, (err) => {
+  fastify.listen({ port: 3000 }, (err) => {
     t.error(err)
     exec('curl -D - http://localhost:3000').then(({ stdout, stderr }) => {
-      t.is(stdout.includes('Link: </style.css>; rel=preload; as=style'), true)
-      t.is(stdout.includes('Link: </script.js>; rel=preload; as=script'), true)
-      t.is(stdout.includes('HTTP/1.1 103 Early Hints'), true)
+      t.equal(stdout.includes('Link: </style.css>; rel=preload; as=style'), true)
+      t.equal(stdout.includes('Link: </script.js>; rel=preload; as=script'), true)
+      t.equal(stdout.includes('HTTP/1.1 103 Early Hints'), true)
       fastify.close()
     })
   })
@@ -39,7 +39,7 @@ test('Should throw when http2 server', (t) => {
     ])
     return { hello: 'world' }
   })
-  fastify.listen(3000, (err) => {
+  fastify.listen({ port: 3000 }, (err) => {
     t.ok(err)
     fastify.close()
   })

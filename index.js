@@ -1,7 +1,7 @@
 'use strict'
 
 const fp = require('fastify-plugin')
-const warning = require('fastify-warning')()
+const warning = require('process-warning')()
 const allowedRel = [
   'dns-prefetch',
   'preconnect',
@@ -106,6 +106,6 @@ function fastifyEH (fastify, opts, next) {
 }
 
 module.exports = fp(fastifyEH, {
-  fastify: '3.x',
-  name: 'fastify-early-hints'
+  fastify: '4.x',
+  name: '@fastify/early-hints'
 })
