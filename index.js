@@ -2,13 +2,8 @@
 
 const fp = require('fastify-plugin')
 const warning = require('process-warning')()
-const allowedRel = [
-  'dns-prefetch',
-  'preconnect',
-  'prefetch',
-  'preload',
-  'prerender'
-]
+
+const allowedRel = ['dns-prefetch', 'preconnect', 'prefetch', 'preload', 'prerender']
 const allowedAs = ['document', 'script', 'image', 'style', 'font']
 const allowedCors = ['anonymous', 'use-credentials']
 const CRLF = '\r\n'
