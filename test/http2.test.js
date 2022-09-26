@@ -5,7 +5,7 @@ const Fastify = require('fastify')
 const eh = require('../index')
 
 test('Should throw when http2 server', (t) => {
-  t.plan(1)
+  t.plan(2)
   const fastify = Fastify({ http2: true })
   fastify.register(eh)
   fastify.get('/', (req, reply) => {
@@ -17,6 +17,7 @@ test('Should throw when http2 server', (t) => {
   })
   fastify.listen({ port: 3000 }, (err) => {
     t.ok(err)
+    t.equal(err.message, 'Early Hints cannot be used with a HTTP2 server.')
     fastify.close()
   })
 })
