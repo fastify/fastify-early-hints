@@ -1,4 +1,4 @@
-import { FastifyPlugin } from "fastify";
+import { FastifyPluginCallback } from "fastify";
 
 export interface earlyHintItem {
   href: string;
@@ -16,5 +16,5 @@ declare module "fastify" {
   }
 }
 
-declare const fastifyCors: FastifyPlugin<() => string>;
+declare const fastifyCors: FastifyPluginCallback<() => string>;
 export default fastifyCors;
