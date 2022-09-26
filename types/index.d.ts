@@ -1,4 +1,4 @@
-import { FastifyPluginCallback } from "fastify";
+import { FastifyPluginCallback } from 'fastify';
 
 export interface earlyHintItem {
   href: string;
@@ -10,7 +10,7 @@ export interface earlyHint {
   add: (content: string[] | earlyHintItem[]) => Promise<void>;
 }
 
-declare module "fastify" {
+declare module 'fastify' {
   interface FastifyReply {
     eh: earlyHint;
   }
