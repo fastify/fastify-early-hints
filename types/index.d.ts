@@ -4,7 +4,7 @@ type EarlyHintAs = 'document' | 'script' | 'image' | 'style' | 'font';
 type EarlyHintCORS = 'anonymous' | 'use-credentials' | 'crossorigin';
 type EarlyHintRel = 'dns-prefetch' | 'preconnect' | 'prefetch' | 'preload' | 'prerender';
 
-export interface earlyHintItem {
+export interface EarlyHintItem {
   href: string;
   rel: EarlyHintRel;
   cors?: boolean | EarlyHintCORS;
@@ -12,7 +12,7 @@ export interface earlyHintItem {
 }
 
 export interface EarlyHint {
-  add: (content: string[] | earlyHintItem[]) => Promise<void>;
+  add: (content: string[] | EarlyHintItem[]) => Promise<void>;
 }
 
 declare module 'fastify' {
