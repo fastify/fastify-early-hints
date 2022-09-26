@@ -38,6 +38,7 @@
     "@types/node": "^14.14.7",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
+    "benchmark": "^2.1.4",
     "fastify": "^4.0.0",
     "standard": "^17.0.0",
     "tap": "^16.0.0",

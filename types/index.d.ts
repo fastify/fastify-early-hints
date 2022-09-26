@@ -1,7 +1,7 @@
-import { FastifyPluginCallback } from 'fastify';
+import { FastifyPluginCallback } from 'fastify'
 
 type EarlyHintAs = 'document' | 'script' | 'image' | 'style' | 'font';
-type EarlyHintCORS = 'anonymous' | 'use-credentials';
+type EarlyHintCORS = 'anonymous' | 'use-credentials' | 'crossorigin';
 type EarlyHintRel = 'dns-prefetch' | 'preconnect' | 'prefetch' | 'preload' | 'prerender';
 
 export interface earlyHintItem {
@@ -11,15 +11,15 @@ export interface earlyHintItem {
   as?: EarlyHintAs;
 }
 
-export interface earlyHint {
+export interface EarlyHint {
   add: (content: string[] | earlyHintItem[]) => Promise<void>;
 }
 
 declare module 'fastify' {
-  interface FastifyReply {
-    eh: earlyHint;
+  interface FastifyReply { // eslint-disable-line no-unused-vars
+    eh: EarlyHint;
   }
 }
 
-declare const fastifyCors: FastifyPluginCallback<() => string>;
-export default fastifyCors;
+declare const fastifyCors: FastifyPluginCallback<() => string>
+export default fastifyCors

@@ -19,9 +19,11 @@ test('formatEntry: entryHint without rel attribute should throw an error', t => 
 })
 
 test('formatEntry: entryHint should create valid values', t => {
-  t.plan(6)
+  t.plan(8)
   t.equal(formatEntry({ href: '/', rel: 'preconnect', cors: 'anonymous', as: 'script' }), 'Link: </>; rel=preconnect; as=script; crossorigin=anonymous')
+  t.equal(formatEntry({ href: '/', rel: 'preconnect', cors: 'use-credentials', as: 'script' }), 'Link: </>; rel=preconnect; as=script; crossorigin=use-credentials')
   t.equal(formatEntry({ href: '/', rel: 'preconnect', cors: true, as: 'script' }), 'Link: </>; rel=preconnect; as=script; crossorigin')
+  t.equal(formatEntry({ href: '/', rel: 'preconnect', cors: 'crossorigin', as: 'script' }), 'Link: </>; rel=preconnect; as=script; crossorigin')
   t.equal(formatEntry({ href: '/', rel: 'preconnect', cors: false, as: 'script' }), 'Link: </>; rel=preconnect; as=script')
   t.equal(formatEntry({ href: '/', rel: 'preconnect', cors: false }), 'Link: </>; rel=preconnect')
   t.equal(formatEntry({ href: '/', rel: 'preconnect' }), 'Link: </>; rel=preconnect')
