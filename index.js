@@ -1,53 +1,8 @@
 'use strict'
 
 const fp = require('fastify-plugin')
-const warning = require('process-warning')()
-
-const allowedRel = ['dns-prefetch', 'preconnect', 'prefetch', 'preload', 'prerender']
-const allowedAs = ['document', 'script', 'image', 'style', 'font']
-const allowedCors = ['anonymous', 'use-credentials']
+const formatEntry = require('./lib/formatEntry')
 const CRLF = '\r\n'
-
-const WARNING_NAME = 'FastifyWarningEarlyHints'
-warning.create(WARNING_NAME, 'FSTEH001', 'as attribute invalid.')
-warning.create(WARNING_NAME, 'FSTEH002', 'cors attribute invalid.')
-warning.create(WARNING_NAME, 'FSTEH003', 'rel attribute invalid.')
-
-function formatEntry (earlyHint) {
-  if (typeof earlyHint === 'string') return earlyHint
-  if (earlyHint.href === undefined) throw Error('href attribute is mandatory')
-  if (earlyHint.rel === undefined) throw Error('rel attribute is mandatory')
-
-  if (!allowedRel.includes(earlyHint.rel)) warning.emit('FSTEH003')
-
-  let _as = ''
-  let _cors = ''
-  if (earlyHint.as !== undefined) {
-    if (!allowedAs.includes(earlyHint.as)) warning.emit('FSTEH001')
-
-    _as = ` as=${earlyHint.as}`
-    if (earlyHint.cors !== undefined) {
-      _as += ';'
-    } else {
-      _as += ' '
-    }
-  }
-  if (earlyHint.cors !== undefined) {
-    _cors += ' '
-    if (typeof earlyHint.cors === 'boolean') {
-      _cors += 'crossorigin'
-    } else if (typeof earlyHint.cors === 'string') {
-      if (allowedCors.includes(earlyHint.cors)) {
-        _cors += `crossorigin=${earlyHint.cors}`
-      } else {
-        warning.emit('FSTEH002')
-      }
-    }
-  }
-  return `Link: <${earlyHint.href}>; rel=${earlyHint.rel}${
-    !_as.length && !_cors.length ? '' : ';'
-  }${_as}${_cors}`
-}
 
 function fastifyEarlyHints (fastify, opts, next) {
   if (fastify.initialConfig.http2 === true) {
