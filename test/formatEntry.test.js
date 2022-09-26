@@ -3,7 +3,6 @@
 const { test } = require('tap')
 const formatEntry = require('../lib/formatEntry')
 
-
 test('formatEntry: value string gets returned unmodified', t => {
   t.plan(1)
   t.equal(formatEntry('Link: </style.css>; rel=preload; as=style'), 'Link: </style.css>; rel=preload; as=style')
