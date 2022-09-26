@@ -8,7 +8,7 @@ const allowedAs = ['document', 'script', 'image', 'style', 'font']
 const allowedCors = ['anonymous', 'use-credentials']
 const CRLF = '\r\n'
 
-const WARNING_NAME = 'FastifWarningEarlyHints'
+const WARNING_NAME = 'FastifyWarningEarlyHints'
 warning.create(WARNING_NAME, 'FSTEH001', 'as attribute invalid.')
 warning.create(WARNING_NAME, 'FSTEH002', 'cors attribute invalid.')
 warning.create(WARNING_NAME, 'FSTEH003', 'rel attribute invalid.')
