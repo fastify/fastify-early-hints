@@ -15,11 +15,15 @@ export interface EarlyHint {
   add: (content: string[] | EarlyHintItem[]) => Promise<void>;
 }
 
+export interface EarlyHintPluginOptions {
+  warn?: boolean
+}
+
 declare module 'fastify' {
   interface FastifyReply { // eslint-disable-line no-unused-vars
     eh: EarlyHint;
   }
 }
 
-declare const fastifyCors: FastifyPluginCallback<() => string>
+declare const fastifyCors: FastifyPluginCallback<EarlyHintPluginOptions>
 export default fastifyCors

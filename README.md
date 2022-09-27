@@ -12,6 +12,20 @@ Based on : https://github.com/fastify/fastify/issues/2683
 ```
 npm i @fastify/early-hints
 ```
+## Options
+
+You can pass the following options during the plugin registration:
+
+
+You can pass the following options during the plugin registration:
+
+```js
+await fastify.register(import('@fastify/early-hints'), {
+  warn: true // default: false
+})
+```
+
+- `warn` : indicates if the plugin should log warnings if invalid values are supplied as early hints
 
 ## Usage
 
@@ -75,11 +89,6 @@ Connection: keep-alive
 
 {"hello":"world"}
 ```
-
-## Todo
-
-- Handling different cases combinations
-- improve tests
 
 ## References
 

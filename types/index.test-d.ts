@@ -5,7 +5,7 @@ import { expectType } from 'tsd'
 const runServer = async () => {
   const app = fastify()
 
-  app.register(fastifyEarlyHints)
+  app.register(fastifyEarlyHints, { warn: false })
   app.post('/', async (req, reply: FastifyReply) => {
     expectType<EarlyHint>(reply.eh)
     expectType<Promise<void>>(reply.eh.add(['FOO']))

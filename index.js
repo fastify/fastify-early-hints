@@ -9,12 +9,16 @@ function fastifyEarlyHints (fastify, opts, next) {
     return next(new Error('Early Hints cannot be used with a HTTP2 server.'))
   }
 
+  const formatEntryOpts = {
+    warn: opts.warn
+  }
+
   function earlyHints (reply) {
     const promiseBuffer = []
     const serialize = function (c) {
       let message = `HTTP/1.1 103 Early Hints${CRLF}`
       for (let i = 0; i < c.length; i++) {
-        message += `${formatEntry(c[i])}${CRLF}`
+        message += `${formatEntry(c[i], formatEntryOpts)}${CRLF}`
       }
       return `${message}${CRLF}`
     }

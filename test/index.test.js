@@ -4,7 +4,7 @@ const { test } = require('tap')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const Fastify = require('fastify')
-const eh = require('../')
+const eh = require('../index')
 
 test('Should not add Early Hints', (t) => {
   t.plan(4)

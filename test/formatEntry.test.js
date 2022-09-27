@@ -39,7 +39,7 @@ test('formatEntry: check for warning FSTEH001', t => {
     t.equal(warning.code, 'FSTEH001')
     t.equal(warning.message, 'as attribute invalid.')
   }
-  t.equal(formatEntry({ href: '/', rel: 'preconnect', cors: false, as: 'invalid' }), 'Link: </>; rel=preconnect; as=invalid')
+  t.equal(formatEntry({ href: '/', rel: 'preconnect', cors: false, as: 'invalid' }, { warn: true }), 'Link: </>; rel=preconnect; as=invalid')
   t.teardown(() => {
     process.removeAllListeners('warning')
   })
@@ -54,7 +54,7 @@ test('formatEntry: check for warning FSTEH002', t => {
     t.equal(warning.code, 'FSTEH002')
     t.equal(warning.message, 'cors attribute invalid.')
   }
-  t.equal(formatEntry({ href: '/', rel: 'preconnect', cors: 'invalid', as: 'script' }), 'Link: </>; rel=preconnect; as=script')
+  t.equal(formatEntry({ href: '/', rel: 'preconnect', cors: 'invalid', as: 'script' }, { warn: true }), 'Link: </>; rel=preconnect; as=script')
   t.teardown(() => {
     process.removeAllListeners('warning')
   })
@@ -69,7 +69,7 @@ test('formatEntry: check for warning FSTEH003', t => {
     t.equal(warning.code, 'FSTEH003')
     t.equal(warning.message, 'rel attribute invalid.')
   }
-  t.equal(formatEntry({ href: '/', rel: 'invalid', cors: false, as: 'script' }), 'Link: </>; rel=invalid; as=script')
+  t.equal(formatEntry({ href: '/', rel: 'invalid', cors: false, as: 'script' }, { warn: true }), 'Link: </>; rel=invalid; as=script')
   t.teardown(() => {
     process.removeAllListeners('warning')
   })
