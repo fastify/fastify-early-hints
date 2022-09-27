@@ -23,8 +23,6 @@ function fastifyEarlyHints (fastify, opts, next) {
       return `${message}${CRLF}`
     }
 
-    const socket = reply.raw.socket
-
     return {
       close: async function () {
         if (promiseBuffer.length) {
@@ -32,8 +30,12 @@ function fastifyEarlyHints (fastify, opts, next) {
         }
       },
       add: function (content) {
-        const p = new Promise((resolve) => {
-          socket.write(serialize(content), 'utf-8', resolve)
+        const p = new Promise(resolve => {
+          if (reply.raw.socket) {
+            reply.raw.socket.write(serialize(content), 'utf-8', resolve)
+          } else {
+            reply.raw.write(serialize(content), 'utf-8', resolve)
+          }
         })
         promiseBuffer.push(p)
         return p
