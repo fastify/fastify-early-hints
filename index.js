@@ -32,9 +32,9 @@ function fastifyEarlyHints (fastify, opts, next) {
       add: function (content) {
         const p = new Promise(resolve => {
           if (reply.raw.socket) {
-            reply.raw.socket.write(serialize(content), 'utf-8', resolve)
+            reply.raw.socket.write(serialize(content), 'ascii', resolve)
           } else {
-            reply.raw.write(serialize(content), 'utf-8', resolve)
+            reply.raw.write(serialize(content), 'ascii', resolve)
           }
         })
         promiseBuffer.push(p)
