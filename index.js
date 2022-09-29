@@ -46,7 +46,7 @@ function fastifyEarlyHints (fastify, opts, next) {
       }
       reply.raw.socket.write(`${EarlyHints}${message}${CRLF}`, 'ascii', () => {
         // we do not care the message is sent or lost. Since early hints
-        // is metadata to instructs the clients to do action before actual
+        // is metadata to instruct the clients to do something before actual
         // content. It should never affect the final result if it lost.
         resolve()
       })
@@ -68,7 +68,7 @@ function fastifyEarlyHints (fastify, opts, next) {
       }
       reply.raw.socket.write(`${EarlyHints}${message}${CRLF}`, 'ascii', () => {
         // we do not care the message is sent or lost. Since early hints
-        // is metadata to instructs the clients to do action before actual
+        // is metadata to instruct the clients to do something before actual
         // content. It should never affect the final result if it lost.
         resolve()
       })
