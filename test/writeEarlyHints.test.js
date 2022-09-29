@@ -19,7 +19,10 @@ test('Should not add Early Hints', async (t) => {
   })
   await fastify.listen({ port: 0 })
 
-  const client = new Client(`http://localhost:${fastify.server.address().port}`)
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
+  })
   t.teardown(client.close.bind(client))
 
   const { body } = await client.request({
@@ -48,7 +51,10 @@ test('Should add Early Hints headers - object', async (t) => {
   })
   await fastify.listen({ port: 0 })
 
-  const client = new Client(`http://localhost:${fastify.server.address().port}`)
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
+  })
   t.teardown(client.close.bind(client))
 
   const { body } = await client.request({
@@ -80,7 +86,10 @@ test('Should add Early Hints headers - object with array property', async (t) =>
   })
   await fastify.listen({ port: 0 })
 
-  const client = new Client(`http://localhost:${fastify.server.address().port}`)
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
+  })
   t.teardown(client.close.bind(client))
 
   const { body } = await client.request({
@@ -114,7 +123,10 @@ test('Should add Early Hints headers - array', async (t) => {
   })
   await fastify.listen({ port: 0 })
 
-  const client = new Client(`http://localhost:${fastify.server.address().port}`)
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
+  })
   t.teardown(client.close.bind(client))
 
   const { body } = await client.request({
@@ -147,7 +159,10 @@ test('Should add Early Hints headers - array with same header', async (t) => {
   })
   await fastify.listen({ port: 0 })
 
-  const client = new Client(`http://localhost:${fastify.server.address().port}`)
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
+  })
   t.teardown(client.close.bind(client))
 
   const { body } = await client.request({
@@ -196,7 +211,10 @@ test('Should throw when invalid input', async (t) => {
   })
   await fastify.listen({ port: 0 })
 
-  const client = new Client(`http://localhost:${fastify.server.address().port}`)
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
+  })
   t.teardown(client.close.bind(client))
 
   const { body } = await client.request({ method: 'GET', path: '/' })

@@ -27,7 +27,10 @@ test('Should not warn on valid entries', async (t) => {
   }
   await fastify.listen({ port: 0 })
 
-  const client = new Client(`http://localhost:${fastify.server.address().port}`)
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
+  })
   t.teardown(client.close.bind(client))
 
   const { body } = await client.request({
@@ -68,7 +71,10 @@ test('Should warn on invalid as (FSTEH001)', async (t) => {
   })
   await fastify.listen({ port: 0 })
 
-  const client = new Client(`http://localhost:${fastify.server.address().port}`)
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
+  })
   t.teardown(client.close.bind(client))
 
   const { body } = await client.request({
@@ -109,7 +115,10 @@ test('Should warn on invalid cors (FSTEH002)', async (t) => {
   })
   await fastify.listen({ port: 0 })
 
-  const client = new Client(`http://localhost:${fastify.server.address().port}`)
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
+  })
   t.teardown(client.close.bind(client))
 
   const { body } = await client.request({
@@ -150,7 +159,10 @@ test('Should warn on invalid rel (FSTEH003)', async (t) => {
   })
   await fastify.listen({ port: 0 })
 
-  const client = new Client(`http://localhost:${fastify.server.address().port}`)
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
+  })
   t.teardown(client.close.bind(client))
 
   const { body } = await client.request({
@@ -189,7 +201,10 @@ test('Should not warn on invalid as (FSTEH001) if warn is false', async (t) => {
   })
   await fastify.listen({ port: 0 })
 
-  const client = new Client(`http://localhost:${fastify.server.address().port}`)
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
+  })
   t.teardown(client.close.bind(client))
 
   const { body } = await client.request({
@@ -228,7 +243,10 @@ test('Should not warn on invalid cors (FSTEH002) if warn is false', async (t) =>
   })
   await fastify.listen({ port: 0 })
 
-  const client = new Client(`http://localhost:${fastify.server.address().port}`)
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
+  })
   t.teardown(client.close.bind(client))
 
   const { body } = await client.request({
@@ -267,7 +285,10 @@ test('Should not warn on invalid rel (FSTEH003) if warn is false', async (t) => 
   })
   await fastify.listen({ port: 0 })
 
-  const client = new Client(`http://localhost:${fastify.server.address().port}`)
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
+  })
   t.teardown(client.close.bind(client))
 
   const { body } = await client.request({
