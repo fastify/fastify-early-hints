@@ -1,4 +1,4 @@
-import { FastifyPluginCallback } from 'fastify';
+import { FastifyPluginCallback } from 'fastify'
 
 type EarlyHintAs = 'document' | 'script' | 'image' | 'style' | 'font';
 type EarlyHintCORS = 'anonymous' | 'use-credentials' | 'crossorigin';
