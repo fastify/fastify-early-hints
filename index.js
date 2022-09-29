@@ -14,7 +14,7 @@ function fastifyEarlyHints (fastify, opts, next) {
     warn: opts.warn
   }
 
-  fastify.decorateReply('writeEarlyHints', function (headers) {
+  function writeEarlyHints (headers) {
     const reply = this
     let message = ''
     if (Array.isArray(headers)) {
@@ -45,16 +45,15 @@ function fastifyEarlyHints (fastify, opts, next) {
         return
       }
       reply.raw.socket.write(`${EarlyHints}${message}${CRLF}`, 'ascii', () => {
-        // we do not care the message is sent or lost. Since early hints
-        // is metadata to instruct the clients to do something before actual
-        // content. It should never affect the final result if it lost.
+      // we do not care the message is sent or lost. Since early hints
+      // is metadata to instruct the clients to do something before actual
+      // content. It should never affect the final result if it lost.
         resolve()
       })
     })
-  })
+  }
 
-  // we provide a handy method to write link header only
-  fastify.decorateReply('writeEarlyHintsLinks', function (links) {
+  function writeEarlyHintsLinks (links) {
     const reply = this
     let message = ''
     for (let i = 0; i < links.length; i++) {
@@ -67,13 +66,18 @@ function fastifyEarlyHints (fastify, opts, next) {
         return
       }
       reply.raw.socket.write(`${EarlyHints}${message}${CRLF}`, 'ascii', () => {
-        // we do not care the message is sent or lost. Since early hints
-        // is metadata to instruct the clients to do something before actual
-        // content. It should never affect the final result if it lost.
+      // we do not care the message is sent or lost. Since early hints
+      // is metadata to instruct the clients to do something before actual
+      // content. It should never affect the final result if it lost.
         resolve()
       })
     })
-  })
+  }
+
+  fastify.decorateReply('writeEarlyHints', writeEarlyHints)
+
+  // we provide a handy method to write link header only
+  fastify.decorateReply('writeEarlyHintsLinks', writeEarlyHintsLinks)
 
   next()
 }
