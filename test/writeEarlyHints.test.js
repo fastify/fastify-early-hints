@@ -4,7 +4,8 @@ const { test } = require('tap')
 const Fastify = require('fastify')
 const eh = require('../index')
 const { Client } = require('undici')
-const { setTimeout } = require('timers/promises')
+const { promisify } = require('util')
+const sleep = promisify(setTimeout)
 
 test('Should not add Early Hints', async (t) => {
   t.plan(1)
@@ -197,11 +198,11 @@ test('Should add multiple Early Hints headers', async (t) => {
       'Content-Security-Policy': 'style-src: self;',
       Link: '</style.css>; rel=preload; as=style'
     })
-    await setTimeout(100)
+    await sleep(100)
     await reply.writeEarlyHints([
       { name: 'Link', value: '</image.png>; rel=preload; as=image' }
     ])
-    await setTimeout(400)
+    await sleep(400)
     return payload
   })
 
