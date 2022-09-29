@@ -223,7 +223,6 @@ test('Should add multiple Early Hints headers', async (t) => {
       t.pass('connected')
     },
     onError (err) {
-      console.log(err)
       t.fail('should not call')
     },
     onUpgrade () {
