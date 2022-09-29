@@ -160,7 +160,16 @@ test('Should add Early Hints headers - array with same header', async (t) => {
 })
 
 test('Should throw when invalid input', async (t) => {
-  const inputs = ['string', 42, null, undefined]
+  const inputs = [
+    'string',
+    42,
+    null,
+    undefined,
+    [{ name: 'Foo', value: 42 }],
+    [{ name: 'Foo', value: null }],
+    [{ name: 'Foo', value: undefined }],
+    [{ name: 'Foo', value: [] }]
+  ]
   t.plan(inputs.length)
   const payload = { hello: 'world' }
 
