@@ -107,7 +107,7 @@ fastify.get("/", async (request, reply) => {
     "Link: </style.css>; rel=preload; as=style",
     "Link: </script.js>; rel=preload; as=script",
   ])
-  await reply.writeEarlyHints([
+  await reply.writeEarlyHintsLink([
     { href: "//example.com", rel: "preload", as: "style" },
     { href: "//example.com", rel: "preload", as: "style", cors: true },
     { href: "//example.com", rel: "preconnect" },
