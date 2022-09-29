@@ -30,7 +30,7 @@ await fastify.register(import('@fastify/early-hints'), {
 
 ### Reply.writeEarlyHints
 
-This method used to write early hints with any header you. It accepts
+This method is used to write early hints with any header you need. It accepts
 either `object` or `Array` of headers and return `Promise`.
 
 ```javascript
