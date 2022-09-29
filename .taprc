@@ -1,5 +1,7 @@
-esm: false
 ts: false
 jsx: false
 coverage: true
 flow: true
+
+files:
+  - test/**/*.test.js
