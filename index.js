@@ -2,6 +2,7 @@
 
 const fp = require('fastify-plugin')
 const formatEntry = require('./lib/formatEntry')
+const wrapWriteInPromise = require('./lib/wrapWriteInPromise')
 const CRLF = '\r\n'
 const earlyHintsHeader = `HTTP/1.1 103 Early Hints${CRLF}`
 
@@ -25,13 +26,11 @@ function fastifyEarlyHints (fastify, opts, next) {
   fastify.decorateReply('writeEarlyHints', function (earlyHints) {
     const raw = this.raw
     const serialized = serialize(earlyHints)
-    return new Promise(resolve => {
-      if (raw.socket) {
-        raw.socket.write(serialized, 'utf-8', resolve)
-      } else {
-        raw.write(serialized, 'utf-8', resolve)
-      }
-    })
+    if (raw.socket) {
+      return wrapWriteInPromise(raw.socket, serialized, 'utf-8')
+    } else {
+      return wrapWriteInPromise(raw, serialized, 'utf-8')
+    }
   })
 
   next()
