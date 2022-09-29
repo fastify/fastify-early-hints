@@ -155,10 +155,22 @@ Connection: keep-alive
 {"hello":"world"}
 ```
 
+## Browser Limitation
+
+Currently (2022-09-29), only Chrome 103 is supporting `103 Early Hints` and
+Chrome will ignore `103 Early Hints` in the following situations.
+
+- Early Hints sent on subresource requests
+- Early Hints sent on iframe navigation
+- Early Hints sent on HTTP/1.1 or earlier
+- Second and following Early Hints
+
+Read more on <https://chromium.googlesource.com/chromium/src/+/master/docs/early-hints.md#103-early-hints>
+
 ## References
 
-- https://httpwg.org/specs/rfc8297.html
-- https://www.w3.org/TR/resource-hints/
+- <https://httpwg.org/specs/rfc8297.html>
+- <https://www.w3.org/TR/resource-hints/>
 
 ## License
 
