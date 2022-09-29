@@ -22,7 +22,7 @@ function fastifyEarlyHints (fastify, opts, next) {
         if (typeof nameValues === 'object' && typeof nameValues.name === 'string' && typeof nameValues.value === 'string') {
           message += `${nameValues.name}: ${nameValues.value}${CRLF}`
         } else {
-          throw Error('"headers" expected to be name-value object')
+          return Promise.reject(Error('"headers" expected to be name-value object'))
         }
       }
     } else if (typeof headers === 'object' && headers !== null) {
@@ -36,7 +36,7 @@ function fastifyEarlyHints (fastify, opts, next) {
         }
       }
     } else {
-      throw Error(`"headers" expected to be object or Array, but recieved ${typeof headers}`)
+      return Promise.reject(Error(`"headers" expected to be object or Array, but received ${typeof headers}`))
     }
 
     return new Promise(function (resolve) {
