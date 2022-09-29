@@ -30,11 +30,12 @@ test('Should not warn on valid entries', async (t) => {
   const client = new Client(`http://localhost:${fastify.server.address().port}`)
   t.teardown(client.close.bind(client))
 
-  await client.request({
+  const { body } = await client.request({
     method: 'GET',
     path: '/',
     onInfo: (x) => { infos.push(x) }
   })
+  await body.dump()
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
@@ -70,11 +71,12 @@ test('Should warn on invalid as (FSTEH001)', async (t) => {
   const client = new Client(`http://localhost:${fastify.server.address().port}`)
   t.teardown(client.close.bind(client))
 
-  await client.request({
+  const { body } = await client.request({
     method: 'GET',
     path: '/',
     onInfo: (x) => { infos.push(x) }
   })
+  await body.dump()
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
@@ -110,11 +112,12 @@ test('Should warn on invalid cors (FSTEH002)', async (t) => {
   const client = new Client(`http://localhost:${fastify.server.address().port}`)
   t.teardown(client.close.bind(client))
 
-  await client.request({
+  const { body } = await client.request({
     method: 'GET',
     path: '/',
     onInfo: (x) => { infos.push(x) }
   })
+  await body.dump()
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
@@ -150,11 +153,12 @@ test('Should warn on invalid rel (FSTEH003)', async (t) => {
   const client = new Client(`http://localhost:${fastify.server.address().port}`)
   t.teardown(client.close.bind(client))
 
-  await client.request({
+  const { body } = await client.request({
     method: 'GET',
     path: '/',
     onInfo: (x) => { infos.push(x) }
   })
+  await body.dump()
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
@@ -188,11 +192,12 @@ test('Should not warn on invalid as (FSTEH001) if warn is false', async (t) => {
   const client = new Client(`http://localhost:${fastify.server.address().port}`)
   t.teardown(client.close.bind(client))
 
-  await client.request({
+  const { body } = await client.request({
     method: 'GET',
     path: '/',
     onInfo: (x) => { infos.push(x) }
   })
+  await body.dump()
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
@@ -226,11 +231,12 @@ test('Should not warn on invalid cors (FSTEH002) if warn is false', async (t) =>
   const client = new Client(`http://localhost:${fastify.server.address().port}`)
   t.teardown(client.close.bind(client))
 
-  await client.request({
+  const { body } = await client.request({
     method: 'GET',
     path: '/',
     onInfo: (x) => { infos.push(x) }
   })
+  await body.dump()
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
@@ -264,11 +270,12 @@ test('Should not warn on invalid rel (FSTEH003) if warn is false', async (t) => 
   const client = new Client(`http://localhost:${fastify.server.address().port}`)
   t.teardown(client.close.bind(client))
 
-  await client.request({
+  const { body } = await client.request({
     method: 'GET',
     path: '/',
     onInfo: (x) => { infos.push(x) }
   })
+  await body.dump()
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)

@@ -22,11 +22,12 @@ test('Should not add Early Hints', async (t) => {
   const client = new Client(`http://localhost:${fastify.server.address().port}`)
   t.teardown(client.close.bind(client))
 
-  await client.request({
+  const { body } = await client.request({
     method: 'GET',
     path: '/',
     onInfo: (x) => { infos.push(x) }
   })
+  await body.dump()
   t.equal(infos.length, 0)
 })
 
@@ -50,11 +51,12 @@ test('Should add Early Hints headers - object', async (t) => {
   const client = new Client(`http://localhost:${fastify.server.address().port}`)
   t.teardown(client.close.bind(client))
 
-  await client.request({
+  const { body } = await client.request({
     method: 'GET',
     path: '/',
     onInfo: (x) => { infos.push(x) }
   })
+  await body.dump()
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
@@ -81,11 +83,12 @@ test('Should add Early Hints headers - object with array property', async (t) =>
   const client = new Client(`http://localhost:${fastify.server.address().port}`)
   t.teardown(client.close.bind(client))
 
-  await client.request({
+  const { body } = await client.request({
     method: 'GET',
     path: '/',
     onInfo: (x) => { infos.push(x) }
   })
+  await body.dump()
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
@@ -114,11 +117,12 @@ test('Should add Early Hints headers - array', async (t) => {
   const client = new Client(`http://localhost:${fastify.server.address().port}`)
   t.teardown(client.close.bind(client))
 
-  await client.request({
+  const { body } = await client.request({
     method: 'GET',
     path: '/',
     onInfo: (x) => { infos.push(x) }
   })
+  await body.dump()
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
@@ -146,11 +150,12 @@ test('Should add Early Hints headers - array with same header', async (t) => {
   const client = new Client(`http://localhost:${fastify.server.address().port}`)
   t.teardown(client.close.bind(client))
 
-  await client.request({
+  const { body } = await client.request({
     method: 'GET',
     path: '/',
     onInfo: (x) => { infos.push(x) }
   })
+  await body.dump()
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
@@ -194,5 +199,6 @@ test('Should throw when invalid input', async (t) => {
   const client = new Client(`http://localhost:${fastify.server.address().port}`)
   t.teardown(client.close.bind(client))
 
-  await client.request({ method: 'GET', path: '/' })
+  const { body } = await client.request({ method: 'GET', path: '/' })
+  await body.dump()
 })
