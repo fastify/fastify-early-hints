@@ -1,4 +1,4 @@
-import { FastifyPluginCallback } from 'fastify'
+import { FastifyPluginCallback } from 'fastify';
 
 type EarlyHintAs = 'document' | 'script' | 'image' | 'style' | 'font';
 type EarlyHintCORS = 'anonymous' | 'use-credentials' | 'crossorigin';
@@ -18,7 +18,7 @@ export interface EarlyHintPluginOptions {
 declare module 'fastify' {
   interface FastifyReply { // eslint-disable-line no-unused-vars
     writeEarlyHints: (headers: Record<string, string | string[]> | { name: string, value: string }[]) => Promise<void>;
-    writeEarlyHintsLink: (content: string[] | EarlyHintItem[]) => Promise<void>;
+    writeEarlyHintsLinks: (content: string[] | EarlyHintItem[]) => Promise<void>;
   }
 }
 

@@ -43,7 +43,7 @@ test('Should add Early Hints headers', async (t) => {
 
   fastify.register(eh)
   fastify.get('/', async (request, reply) => {
-    await reply.writeEarlyHintsLink([
+    await reply.writeEarlyHintsLinks([
       'Link: </style.css>; rel=preload; as=style',
       'Link: </script.js>; rel=preload; as=script'
     ])

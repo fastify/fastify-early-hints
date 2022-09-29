@@ -14,7 +14,7 @@ test('Should not warn on valid entries', async (t) => {
 
   fastify.register(eh, { warn: true })
   fastify.get('/', async (request, reply) => {
-    await reply.writeEarlyHintsLink([
+    await reply.writeEarlyHintsLinks([
       { href: '/style.css', rel: 'preload', as: 'style' },
       { href: '/script.js', rel: 'preload', as: 'script' }
     ])
@@ -63,7 +63,7 @@ test('Should warn on invalid as (FSTEH001)', async (t) => {
     t.equal(warning.message, 'as attribute invalid.')
   }
   fastify.get('/', async (request, reply) => {
-    await reply.writeEarlyHintsLink([
+    await reply.writeEarlyHintsLinks([
       { href: '/style.css', rel: 'preload', as: 'invalid' },
       { href: '/script.js', rel: 'preload', as: 'script' }
     ])
@@ -107,7 +107,7 @@ test('Should warn on invalid cors (FSTEH002)', async (t) => {
     t.equal(warning.message, 'cors attribute invalid.')
   }
   fastify.get('/', async (request, reply) => {
-    await reply.writeEarlyHintsLink([
+    await reply.writeEarlyHintsLinks([
       { href: '/style.css', rel: 'preload', as: 'style', cors: 'invalid' },
       { href: '/script.js', rel: 'preload', as: 'script' }
     ])
@@ -151,7 +151,7 @@ test('Should warn on invalid rel (FSTEH003)', async (t) => {
     t.equal(warning.message, 'rel attribute invalid.')
   }
   fastify.get('/', async (request, reply) => {
-    await reply.writeEarlyHintsLink([
+    await reply.writeEarlyHintsLinks([
       { href: '/style.css', rel: 'invalid', as: 'style' },
       { href: '/script.js', rel: 'preload', as: 'script' }
     ])
@@ -193,7 +193,7 @@ test('Should not warn on invalid as (FSTEH001) if warn is false', async (t) => {
     t.fail('should not have called')
   }
   fastify.get('/', async (request, reply) => {
-    await reply.writeEarlyHintsLink([
+    await reply.writeEarlyHintsLinks([
       { href: '/style.css', rel: 'preload', as: 'invalid' },
       { href: '/script.js', rel: 'preload', as: 'script' }
     ])
@@ -235,7 +235,7 @@ test('Should not warn on invalid cors (FSTEH002) if warn is false', async (t) =>
     t.fail('should not have called')
   }
   fastify.get('/', async (request, reply) => {
-    await reply.writeEarlyHintsLink([
+    await reply.writeEarlyHintsLinks([
       { href: '/style.css', rel: 'preload', as: 'style', cors: 'invalid' },
       { href: '/script.js', rel: 'preload', as: 'script' }
     ])
@@ -277,7 +277,7 @@ test('Should not warn on invalid rel (FSTEH003) if warn is false', async (t) => 
     t.fail('should not have called')
   }
   fastify.get('/', (request, reply) => {
-    reply.writeEarlyHintsLink([
+    reply.writeEarlyHintsLinks([
       { href: '/style.css', rel: 'invalid', as: 'style' },
       { href: '/script.js', rel: 'preload', as: 'script' }
     ])

@@ -90,7 +90,7 @@ Connection: keep-alive
 {"hello":"world"}
 ```
 
-### Reply.writeEarlyHintsLink
+### Reply.writeEarlyHintsLinks
 
 This method used to write only the `Link` header. It accepts an `Array` and
 return `Promise`.
@@ -103,11 +103,11 @@ const fastify = Fastify({ logger: true });
 fastify.register(eh);
 
 fastify.get("/", async (request, reply) => {
-  await reply.writeEarlyHintsLink([
+  await reply.writeEarlyHintsLinks([
     "Link: </style.css>; rel=preload; as=style",
     "Link: </script.js>; rel=preload; as=script",
   ])
-  await reply.writeEarlyHintsLink([
+  await reply.writeEarlyHintsLinks([
     { href: "//example.com", rel: "preload", as: "style" },
     { href: "//example.com", rel: "preload", as: "style", cors: true },
     { href: "//example.com", rel: "preconnect" },

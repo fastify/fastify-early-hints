@@ -36,13 +36,13 @@ test('Stress for writeEarlyHints', t => {
   })
 })
 
-test('Stress for writeEarlyHintsLink', t => {
+test('Stress for writeEarlyHintsLinks', t => {
   t.plan(8)
 
   const fastify = Fastify({ logger: false })
   fastify.register(fastifyEarlyHints)
   fastify.get('/', async (request, reply) => {
-    await reply.writeEarlyHintsLink([
+    await reply.writeEarlyHintsLinks([
       'Link: </style.css>; rel=preload; as=style',
       'Link: </script.js>; rel=preload; as=script'
     ])

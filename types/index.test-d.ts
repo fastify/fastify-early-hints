@@ -9,7 +9,7 @@ const runServer = async () => {
   app.post('/', async (request, reply: FastifyReply) => {
     expectType<Promise<void>>(reply.writeEarlyHints({ Foo: 'Bar', Array: ['Hello', 'World'] }))
     expectType<Promise<void>>(reply.writeEarlyHints([{ name: 'Foo', value: 'Bar' }]))
-    expectType<Promise<void>>(reply.writeEarlyHintsLink(['FOO']))
+    expectType<Promise<void>>(reply.writeEarlyHintsLinks(['FOO']))
     reply.send()
   })
 

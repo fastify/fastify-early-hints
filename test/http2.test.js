@@ -9,7 +9,7 @@ test('Should throw when http2 server', async (t) => {
   const fastify = Fastify({ http2: true })
   fastify.register(eh)
   fastify.get('/', async (request, reply) => {
-    await reply.writeEarlyHintsLink([
+    await reply.writeEarlyHintsLinks([
       'Link: </style.css>; rel=preload; as=style',
       'Link: </script.js>; rel=preload; as=script'
     ])

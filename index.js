@@ -54,7 +54,7 @@ function fastifyEarlyHints (fastify, opts, next) {
   })
 
   // we provide a handy method to write link header only
-  fastify.decorateReply('writeEarlyHintsLink', function (links) {
+  fastify.decorateReply('writeEarlyHintsLinks', function (links) {
     const reply = this
     let message = ''
     for (let i = 0; i < links.length; i++) {
