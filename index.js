@@ -21,6 +21,8 @@ function fastifyEarlyHints (fastify, opts, next) {
       for (const nameValues of headers) {
         if (typeof nameValues === 'object' && typeof nameValues.name === 'string' && typeof nameValues.value === 'string') {
           message += `${nameValues.name}: ${nameValues.value}${CRLF}`
+        } else {
+          throw Error('"headers" expected to be name-value object')
         }
       }
     } else if (typeof headers === 'object' && headers !== null) {
