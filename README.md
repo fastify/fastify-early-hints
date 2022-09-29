@@ -16,9 +16,6 @@ npm i @fastify/early-hints
 
 You can pass the following options during the plugin registration:
 
-
-You can pass the following options during the plugin registration:
-
 ```js
 await fastify.register(import('@fastify/early-hints'), {
   warn: true // default: false
@@ -29,7 +26,7 @@ await fastify.register(import('@fastify/early-hints'), {
 
 ## Usage
 
-- `eh.add`: Every call writes to the socket and returns a promise. Altought all the promises created throught the reply lifecycle are awaited in the `onSend` hook.
+- `writeEarlyHints`: Every call writes to the socket and returns a promise.
 
 ```javascript
 const Fastify = require("fastify");
@@ -39,11 +36,11 @@ const fastify = Fastify({ logger: true });
 fastify.register(eh);
 
 fastify.get("/", async (request, reply) => {
-  reply.eh.add([
+  await reply.writeEarlyHints([
     "Link: </style.css>; rel=preload; as=style",
     "Link: </script.js>; rel=preload; as=script",
   ]);
-  await reply.eh.add([
+  await reply.writeEarlyHints([
     { href: "//example.com", rel: "preload", as: "style" },
     { href: "//example.com", rel: "preload", as: "style", cors: true },
     { href: "//example.com", rel: "preconnect" },

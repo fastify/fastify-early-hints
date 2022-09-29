@@ -1,5 +1,5 @@
 import fastify, { FastifyReply } from 'fastify'
-import fastifyEarlyHints, { EarlyHint } from '..'
+import fastifyEarlyHints, { EarlyHintItem } from '..'
 import { expectType } from 'tsd'
 
 const runServer = async () => {
@@ -7,8 +7,8 @@ const runServer = async () => {
 
   app.register(fastifyEarlyHints, { warn: false })
   app.post('/', async (req, reply: FastifyReply) => {
-    expectType<EarlyHint>(reply.eh)
-    expectType<Promise<void>>(reply.eh.add(['FOO']))
+    expectType<(content: string[] | EarlyHintItem[]) => Promise<void>>(reply.writeEarlyHints)
+    expectType<Promise<void>>(reply.writeEarlyHints(['FOO']))
     reply.send()
   })
 

@@ -10,7 +10,7 @@ test('Should not add Early Hints', (t) => {
   t.plan(4)
   const fastify = Fastify()
   fastify.register(eh)
-  fastify.get('/', (req, reply) => {
+  fastify.get('/', async (req, reply) => {
     return { hello: 'world' }
   })
   fastify.listen({ port: 3000 }, (err) => {
@@ -28,8 +28,8 @@ test('Should add Early Hints headers', (t) => {
   t.plan(4)
   const fastify = Fastify()
   fastify.register(eh)
-  fastify.get('/', (req, reply) => {
-    reply.eh.add([
+  fastify.get('/', async (req, reply) => {
+    await reply.writeEarlyHints([
       'Link: </style.css>; rel=preload; as=style',
       'Link: </script.js>; rel=preload; as=script'
     ])

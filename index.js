@@ -3,6 +3,7 @@
 const fp = require('fastify-plugin')
 const formatEntry = require('./lib/formatEntry')
 const CRLF = '\r\n'
+const earlyHintsHeader = `HTTP/1.1 103 Early Hints${CRLF}`
 
 function fastifyEarlyHints (fastify, opts, next) {
   if (fastify.initialConfig.http2 === true) {
@@ -13,47 +14,25 @@ function fastifyEarlyHints (fastify, opts, next) {
     warn: opts.warn
   }
 
-  function earlyHints (reply) {
-    const promiseBuffer = []
-    const serialize = function (c) {
-      let message = `HTTP/1.1 103 Early Hints${CRLF}`
-      for (let i = 0; i < c.length; i++) {
-        message += `${formatEntry(c[i], formatEntryOpts)}${CRLF}`
-      }
-      return `${message}${CRLF}`
+  const serialize = function (c) {
+    let message = ''
+    for (let i = 0; i < c.length; i++) {
+      message += `${formatEntry(c[i], formatEntryOpts)}${CRLF}`
     }
+    return `${earlyHintsHeader}${message}${CRLF}`
+  }
 
-    return {
-      close: async function () {
-        if (promiseBuffer.length) {
-          await Promise.all(promiseBuffer)
-        }
-      },
-      add: function (content) {
-        const p = new Promise(resolve => {
-          if (reply.raw.socket) {
-            reply.raw.socket.write(serialize(content), 'utf-8', resolve)
-          } else {
-            reply.raw.write(serialize(content), 'utf-8', resolve)
-          }
-        })
-        promiseBuffer.push(p)
-        return p
+  fastify.decorateReply('writeEarlyHints', function (earlyHints) {
+    const raw = this.raw
+    const serialized = serialize(earlyHints)
+    return new Promise(resolve => {
+      if (raw.socket) {
+        raw.socket.write(serialized, 'utf-8', resolve)
+      } else {
+        raw.write(serialized, 'utf-8', resolve)
       }
-    }
-  }
-
-  function onRequest (request, reply, done) {
-    reply.eh = earlyHints(reply)
-    done()
-  }
-
-  async function onSend (request, reply, payload) {
-    await reply.eh.close()
-  }
-
-  fastify.addHook('onRequest', onRequest)
-  fastify.addHook('onSend', onSend)
+    })
+  })
 
   next()
 }

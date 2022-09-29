@@ -11,7 +11,7 @@ test('Should not add Early Hints', t => {
   const fastify = Fastify({ logger: false })
   fastify.register(fastifyEarlyHints)
   fastify.get('/', async (request, reply) => {
-    await reply.eh.add([
+    await reply.writeEarlyHints([
       'Link: </style.css>; rel=preload; as=style',
       'Link: </script.js>; rel=preload; as=script'
     ])
