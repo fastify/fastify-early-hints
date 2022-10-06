@@ -1,17 +1,20 @@
 'use strict'
 
 const { test } = require('tap')
-const util = require('util')
-const exec = util.promisify(require('child_process').exec)
 const Fastify = require('fastify')
 const eh = require('../index')
+const { Client } = require('undici')
 
-test('Should not warn on valid entries', (t) => {
-  t.plan(4)
+test('Should not warn on valid entries', async (t) => {
+  t.plan(6)
+  const infos = []
+
   const fastify = Fastify()
+  t.teardown(fastify.close.bind(fastify))
+
   fastify.register(eh, { warn: true })
-  fastify.get('/', (req, reply) => {
-    reply.eh.add([
+  fastify.get('/', async (request, reply) => {
+    await reply.writeEarlyHintsLinks([
       { href: '/style.css', rel: 'preload', as: 'style' },
       { href: '/script.js', rel: 'preload', as: 'script' }
     ])
@@ -20,22 +23,37 @@ test('Should not warn on valid entries', (t) => {
   process.removeAllListeners('warning')
   process.on('warning', onWarning)
   function onWarning (warning) {
-    t.err(new Error('should not have called'))
+    t.fail('should not have called')
   }
-  fastify.listen({ port: 3001 }, (err) => {
-    t.error(err)
-    exec('curl -D - http://localhost:3001').then(({ stdout, stderr }) => {
-      t.equal(stdout.includes('Link: </style.css>; rel=preload; as=style'), true)
-      t.equal(stdout.includes('Link: </script.js>; rel=preload; as=script'), true)
-      t.equal(stdout.includes('HTTP/1.1 103 Early Hints'), true)
-      fastify.close()
-    })
+  await fastify.listen({ port: 0 })
+
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
   })
+  t.teardown(client.close.bind(client))
+
+  const { body } = await client.request({
+    method: 'GET',
+    path: '/',
+    onInfo: (x) => { infos.push(x) }
+  })
+  await body.dump()
+  t.equal(infos.length, 1)
+  t.equal(infos[0].statusCode, 103)
+  t.equal(typeof infos[0].headers === 'object', true)
+  t.equal(Array.isArray(infos[0].headers.link), true)
+  t.equal(infos[0].headers.link[0], '</style.css>; rel=preload; as=style')
+  t.equal(infos[0].headers.link[1], '</script.js>; rel=preload; as=script')
 })
 
-test('Should warn on invalid as (FSTEH001)', (t) => {
-  t.plan(7)
+test('Should warn on invalid as (FSTEH001)', async (t) => {
+  t.plan(9)
+  const infos = []
+
   const fastify = Fastify()
+  t.teardown(fastify.close.bind(fastify))
+
   fastify.register(eh, { warn: true })
   process.removeAllListeners('warning')
   process.on('warning', onWarning)
@@ -44,27 +62,42 @@ test('Should warn on invalid as (FSTEH001)', (t) => {
     t.equal(warning.code, 'FSTEH001')
     t.equal(warning.message, 'as attribute invalid.')
   }
-  fastify.get('/', (req, reply) => {
-    reply.eh.add([
+  fastify.get('/', async (request, reply) => {
+    await reply.writeEarlyHintsLinks([
       { href: '/style.css', rel: 'preload', as: 'invalid' },
       { href: '/script.js', rel: 'preload', as: 'script' }
     ])
     return { hello: 'world' }
   })
-  fastify.listen({ port: 3001 }, (err) => {
-    t.error(err)
-    exec('curl -D - http://localhost:3001').then(({ stdout, stderr }) => {
-      t.equal(stdout.includes('Link: </style.css>; rel=preload; as=invalid'), true)
-      t.equal(stdout.includes('Link: </script.js>; rel=preload; as=script'), true)
-      t.equal(stdout.includes('HTTP/1.1 103 Early Hints'), true)
-      fastify.close()
-    })
+  await fastify.listen({ port: 0 })
+
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
   })
+  t.teardown(client.close.bind(client))
+
+  const { body } = await client.request({
+    method: 'GET',
+    path: '/',
+    onInfo: (x) => { infos.push(x) }
+  })
+  await body.dump()
+  t.equal(infos.length, 1)
+  t.equal(infos[0].statusCode, 103)
+  t.equal(typeof infos[0].headers === 'object', true)
+  t.equal(Array.isArray(infos[0].headers.link), true)
+  t.equal(infos[0].headers.link[0], '</style.css>; rel=preload; as=invalid')
+  t.equal(infos[0].headers.link[1], '</script.js>; rel=preload; as=script')
 })
 
-test('Should warn on invalid cors (FSTEH002)', (t) => {
-  t.plan(7)
+test('Should warn on invalid cors (FSTEH002)', async (t) => {
+  t.plan(9)
+  const infos = []
+
   const fastify = Fastify()
+  t.teardown(fastify.close.bind(fastify))
+
   fastify.register(eh, { warn: true })
   process.removeAllListeners('warning')
   process.on('warning', onWarning)
@@ -73,27 +106,42 @@ test('Should warn on invalid cors (FSTEH002)', (t) => {
     t.equal(warning.code, 'FSTEH002')
     t.equal(warning.message, 'cors attribute invalid.')
   }
-  fastify.get('/', (req, reply) => {
-    reply.eh.add([
+  fastify.get('/', async (request, reply) => {
+    await reply.writeEarlyHintsLinks([
       { href: '/style.css', rel: 'preload', as: 'style', cors: 'invalid' },
       { href: '/script.js', rel: 'preload', as: 'script' }
     ])
     return { hello: 'world' }
   })
-  fastify.listen({ port: 3001 }, (err) => {
-    t.error(err)
-    exec('curl -D - http://localhost:3001').then(({ stdout, stderr }) => {
-      t.equal(stdout.includes('Link: </style.css>; rel=preload; as=style'), true)
-      t.equal(stdout.includes('Link: </script.js>; rel=preload; as=script'), true)
-      t.equal(stdout.includes('HTTP/1.1 103 Early Hints'), true)
-      fastify.close()
-    })
+  await fastify.listen({ port: 0 })
+
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
   })
+  t.teardown(client.close.bind(client))
+
+  const { body } = await client.request({
+    method: 'GET',
+    path: '/',
+    onInfo: (x) => { infos.push(x) }
+  })
+  await body.dump()
+  t.equal(infos.length, 1)
+  t.equal(infos[0].statusCode, 103)
+  t.equal(typeof infos[0].headers === 'object', true)
+  t.equal(Array.isArray(infos[0].headers.link), true)
+  t.equal(infos[0].headers.link[0], '</style.css>; rel=preload; as=style')
+  t.equal(infos[0].headers.link[1], '</script.js>; rel=preload; as=script')
 })
 
-test('Should warn on invalid rel (FSTEH003)', (t) => {
-  t.plan(7)
+test('Should warn on invalid rel (FSTEH003)', async (t) => {
+  t.plan(9)
+  const infos = []
+
   const fastify = Fastify()
+  t.teardown(fastify.close.bind(fastify))
+
   fastify.register(eh, { warn: true })
   process.removeAllListeners('warning')
   process.on('warning', onWarning)
@@ -102,101 +150,157 @@ test('Should warn on invalid rel (FSTEH003)', (t) => {
     t.equal(warning.code, 'FSTEH003')
     t.equal(warning.message, 'rel attribute invalid.')
   }
-  fastify.get('/', (req, reply) => {
-    reply.eh.add([
+  fastify.get('/', async (request, reply) => {
+    await reply.writeEarlyHintsLinks([
       { href: '/style.css', rel: 'invalid', as: 'style' },
       { href: '/script.js', rel: 'preload', as: 'script' }
     ])
     return { hello: 'world' }
   })
-  fastify.listen({ port: 3001 }, (err) => {
-    t.error(err)
-    exec('curl -D - http://localhost:3001').then(({ stdout, stderr }) => {
-      t.equal(stdout.includes('Link: </style.css>; rel=invalid; as=style'), true)
-      t.equal(stdout.includes('Link: </script.js>; rel=preload; as=script'), true)
-      t.equal(stdout.includes('HTTP/1.1 103 Early Hints'), true)
-      fastify.close()
-    })
+  await fastify.listen({ port: 0 })
+
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
   })
+  t.teardown(client.close.bind(client))
+
+  const { body } = await client.request({
+    method: 'GET',
+    path: '/',
+    onInfo: (x) => { infos.push(x) }
+  })
+  await body.dump()
+  t.equal(infos.length, 1)
+  t.equal(infos[0].statusCode, 103)
+  t.equal(typeof infos[0].headers === 'object', true)
+  t.equal(Array.isArray(infos[0].headers.link), true)
+  t.equal(infos[0].headers.link[0], '</style.css>; rel=invalid; as=style')
+  t.equal(infos[0].headers.link[1], '</script.js>; rel=preload; as=script')
 })
 
-test('Should not warn on invalid as (FSTEH001) if warn is false', (t) => {
-  t.plan(4)
+test('Should not warn on invalid as (FSTEH001) if warn is false', async (t) => {
+  t.plan(6)
+  const infos = []
+
   const fastify = Fastify()
+  t.teardown(fastify.close.bind(fastify))
+
   fastify.register(eh, { warn: false })
   process.removeAllListeners('warning')
   process.on('warning', onWarning)
   function onWarning (warning) {
-    t.err(new Error('should not be called'))
+    t.fail('should not have called')
   }
-  fastify.get('/', (req, reply) => {
-    reply.eh.add([
+  fastify.get('/', async (request, reply) => {
+    await reply.writeEarlyHintsLinks([
       { href: '/style.css', rel: 'preload', as: 'invalid' },
       { href: '/script.js', rel: 'preload', as: 'script' }
     ])
     return { hello: 'world' }
   })
-  fastify.listen({ port: 3001 }, (err) => {
-    t.error(err)
-    exec('curl -D - http://localhost:3001').then(({ stdout, stderr }) => {
-      t.equal(stdout.includes('Link: </style.css>; rel=preload; as=invalid'), true)
-      t.equal(stdout.includes('Link: </script.js>; rel=preload; as=script'), true)
-      t.equal(stdout.includes('HTTP/1.1 103 Early Hints'), true)
-      fastify.close()
-    })
+  await fastify.listen({ port: 0 })
+
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
   })
+  t.teardown(client.close.bind(client))
+
+  const { body } = await client.request({
+    method: 'GET',
+    path: '/',
+    onInfo: (x) => { infos.push(x) }
+  })
+  await body.dump()
+  t.equal(infos.length, 1)
+  t.equal(infos[0].statusCode, 103)
+  t.equal(typeof infos[0].headers === 'object', true)
+  t.equal(Array.isArray(infos[0].headers.link), true)
+  t.equal(infos[0].headers.link[0], '</style.css>; rel=preload; as=invalid')
+  t.equal(infos[0].headers.link[1], '</script.js>; rel=preload; as=script')
 })
 
-test('Should not warn on invalid cors (FSTEH002) if warn is false', (t) => {
-  t.plan(4)
+test('Should not warn on invalid cors (FSTEH002) if warn is false', async (t) => {
+  t.plan(6)
+  const infos = []
+
   const fastify = Fastify()
+  t.teardown(fastify.close.bind(fastify))
+
   fastify.register(eh, { warn: false })
   process.removeAllListeners('warning')
   process.on('warning', onWarning)
   function onWarning (warning) {
-    t.err(new Error('should not be called'))
+    t.fail('should not have called')
   }
-  fastify.get('/', (req, reply) => {
-    reply.eh.add([
+  fastify.get('/', async (request, reply) => {
+    await reply.writeEarlyHintsLinks([
       { href: '/style.css', rel: 'preload', as: 'style', cors: 'invalid' },
       { href: '/script.js', rel: 'preload', as: 'script' }
     ])
     return { hello: 'world' }
   })
-  fastify.listen({ port: 3001 }, (err) => {
-    t.error(err)
-    exec('curl -D - http://localhost:3001').then(({ stdout, stderr }) => {
-      t.equal(stdout.includes('Link: </style.css>; rel=preload; as=style'), true)
-      t.equal(stdout.includes('Link: </script.js>; rel=preload; as=script'), true)
-      t.equal(stdout.includes('HTTP/1.1 103 Early Hints'), true)
-      fastify.close()
-    })
+  await fastify.listen({ port: 0 })
+
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
   })
+  t.teardown(client.close.bind(client))
+
+  const { body } = await client.request({
+    method: 'GET',
+    path: '/',
+    onInfo: (x) => { infos.push(x) }
+  })
+  await body.dump()
+  t.equal(infos.length, 1)
+  t.equal(infos[0].statusCode, 103)
+  t.equal(typeof infos[0].headers === 'object', true)
+  t.equal(Array.isArray(infos[0].headers.link), true)
+  t.equal(infos[0].headers.link[0], '</style.css>; rel=preload; as=style')
+  t.equal(infos[0].headers.link[1], '</script.js>; rel=preload; as=script')
 })
 
-test('Should not warn on invalid rel (FSTEH003) if warn is false', (t) => {
-  t.plan(4)
+test('Should not warn on invalid rel (FSTEH003) if warn is false', async (t) => {
+  t.plan(6)
+  const infos = []
+
   const fastify = Fastify()
+  t.teardown(fastify.close.bind(fastify))
+
   fastify.register(eh, { warn: false })
   process.removeAllListeners('warning')
   process.on('warning', onWarning)
   function onWarning (warning) {
-    t.err(new Error('should not be called'))
+    t.fail('should not have called')
   }
-  fastify.get('/', (req, reply) => {
-    reply.eh.add([
+  fastify.get('/', (request, reply) => {
+    reply.writeEarlyHintsLinks([
       { href: '/style.css', rel: 'invalid', as: 'style' },
       { href: '/script.js', rel: 'preload', as: 'script' }
     ])
     return { hello: 'world' }
   })
-  fastify.listen({ port: 3001 }, (err) => {
-    t.error(err)
-    exec('curl -D - http://localhost:3001').then(({ stdout, stderr }) => {
-      t.equal(stdout.includes('Link: </style.css>; rel=invalid; as=style'), true)
-      t.equal(stdout.includes('Link: </script.js>; rel=preload; as=script'), true)
-      t.equal(stdout.includes('HTTP/1.1 103 Early Hints'), true)
-      fastify.close()
-    })
+  await fastify.listen({ port: 0 })
+
+  const client = new Client(`http://localhost:${fastify.server.address().port}`, {
+    keepAliveTimeout: 10,
+    keepAliveMaxTimeout: 10
   })
+  t.teardown(client.close.bind(client))
+
+  const { body } = await client.request({
+    method: 'GET',
+    path: '/',
+    onInfo: (x) => { infos.push(x) }
+  })
+  await body.dump()
+  t.equal(infos.length, 1)
+  t.equal(infos[0].statusCode, 103)
+  t.equal(typeof infos[0].headers === 'object', true)
+  t.equal(Array.isArray(infos[0].headers.link), true)
+  t.equal(infos[0].headers.link[0], '</style.css>; rel=invalid; as=style')
+  t.equal(infos[0].headers.link[1], '</script.js>; rel=preload; as=script')
 })

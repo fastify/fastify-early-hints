@@ -11,17 +11,14 @@ export interface EarlyHintItem {
   as?: EarlyHintAs;
 }
 
-export interface EarlyHint {
-  add: (content: string[] | EarlyHintItem[]) => Promise<void>;
-}
-
 export interface EarlyHintPluginOptions {
   warn?: boolean
 }
 
 declare module 'fastify' {
   interface FastifyReply { // eslint-disable-line no-unused-vars
-    eh: EarlyHint;
+    writeEarlyHints: (headers: Record<string, string | string[]> | { name: string, value: string }[]) => Promise<void>;
+    writeEarlyHintsLinks: (content: string[] | EarlyHintItem[]) => Promise<void>;
   }
 }
 
