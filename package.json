@@ -1,6 +1,6 @@
 {
   "name": "@fastify/early-hints",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "Fastify Early Hints",
   "main": "index.js",
   "types": "types/index.d.ts",
