@@ -2,76 +2,59 @@
 
 const fp = require('fastify-plugin')
 const formatEntry = require('./lib/formatEntry')
-const CRLF = '\r\n'
-const EarlyHints = `HTTP/1.1 103 Early Hint${CRLF}`
+const nativeSupport = require('./lib/support')
 
 function fastifyEarlyHints (fastify, opts, next) {
-  if (fastify.initialConfig.http2 === true) {
-    return next(Error('Early Hints cannot be used with a HTTP2 server.'))
+  let write
+  if (nativeSupport === true) {
+    // we use native method if possible
+    write = require('./lib/protocol/native')
+  } else if (fastify.initialConfig.http2 === true) {
+    // TODO: remove after node@18 End-of-Life
+    // if not, we fallback to our own method for http2
+    write = require('./lib/protocol/http2')
+  } else {
+    // TODO: remove after node@18 End-of-Life
+    // if not, we fallback to our own method for http
+    write = require('./lib/protocol/http')
   }
 
   const formatEntryOpts = {
     warn: opts.warn
   }
 
-  function writeEarlyHints (headers) {
+  function writeEarlyHints (_headers) {
     const reply = this
-    let message = ''
-    if (Array.isArray(headers)) {
-      for (const nameValues of headers) {
+    let headers = Object.create(null)
+    if (Array.isArray(_headers)) {
+      // we support more than node native
+      // so, we change to the node supported format
+      for (const nameValues of _headers) {
         if (typeof nameValues === 'object' && typeof nameValues.name === 'string' && typeof nameValues.value === 'string') {
-          message += `${nameValues.name}: ${nameValues.value}${CRLF}`
+          if (nameValues.name in headers) {
+            if (Array.isArray(headers[nameValues.name])) {
+              headers[nameValues.name].push(nameValues.value)
+            } else {
+              headers[nameValues.name] = [headers[nameValues.name], nameValues.value]
+            }
+          } else {
+            headers[nameValues.name] = nameValues.value
+          }
         } else {
           return Promise.reject(Error('"headers" expected to be name-value object'))
         }
       }
-    } else if (typeof headers === 'object' && headers !== null) {
-      for (const key of Object.keys(headers)) {
-        if (Array.isArray(headers[key])) {
-          for (const value of headers[key]) {
-            message += `${key}: ${value}${CRLF}`
-          }
-        } else {
-          message += `${key}: ${headers[key]}${CRLF}`
-        }
-      }
+    } else if (typeof _headers === 'object' && _headers !== null) {
+      headers = _headers
     } else {
       return Promise.reject(Error(`"headers" expected to be object or Array, but received ${typeof headers}`))
     }
-
-    return new Promise(function (resolve) {
-      if (reply.raw.socket === null) {
-        resolve()
-        return
-      }
-      reply.raw.socket.write(`${EarlyHints}${message}${CRLF}`, 'ascii', () => {
-      // we do not care the message is sent or lost. Since early hints
-      // is metadata to instruct the clients to do something before actual
-      // content. It should never affect the final result if it lost.
-        resolve()
-      })
-    })
+    return write(reply, headers)
   }
 
   function writeEarlyHintsLinks (links) {
     const reply = this
-    let message = ''
-    for (let i = 0; i < links.length; i++) {
-      message += `${formatEntry(links[i], formatEntryOpts)}${CRLF}`
-    }
-
-    return new Promise(function (resolve) {
-      if (reply.raw.socket === null) {
-        resolve()
-        return
-      }
-      reply.raw.socket.write(`${EarlyHints}${message}${CRLF}`, 'ascii', () => {
-      // we do not care the message is sent or lost. Since early hints
-      // is metadata to instruct the clients to do something before actual
-      // content. It should never affect the final result if it lost.
-        resolve()
-      })
-    })
+    return write(reply, { Link: links.map((link) => formatEntry(link, formatEntryOpts)) })
   }
 
   fastify.decorateReply('writeEarlyHints', writeEarlyHints)

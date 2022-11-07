@@ -6,7 +6,7 @@ const eh = require('../index')
 const { Client } = require('undici')
 
 test('Should not warn on valid entries', async (t) => {
-  t.plan(6)
+  t.plan(5)
   const infos = []
 
   const fastify = Fastify()
@@ -42,13 +42,12 @@ test('Should not warn on valid entries', async (t) => {
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
-  t.equal(Array.isArray(infos[0].headers.link), true)
-  t.equal(infos[0].headers.link[0], '</style.css>; rel=preload; as=style')
-  t.equal(infos[0].headers.link[1], '</script.js>; rel=preload; as=script')
+  t.equal(typeof infos[0].headers.link === 'string', true)
+  t.equal(infos[0].headers.link, '</style.css>; rel=preload; as=style, </script.js>; rel=preload; as=script')
 })
 
 test('Should warn on invalid as (FSTEH001)', async (t) => {
-  t.plan(9)
+  t.plan(8)
   const infos = []
 
   const fastify = Fastify()
@@ -86,13 +85,12 @@ test('Should warn on invalid as (FSTEH001)', async (t) => {
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
-  t.equal(Array.isArray(infos[0].headers.link), true)
-  t.equal(infos[0].headers.link[0], '</style.css>; rel=preload; as=invalid')
-  t.equal(infos[0].headers.link[1], '</script.js>; rel=preload; as=script')
+  t.equal(typeof infos[0].headers.link === 'string', true)
+  t.equal(infos[0].headers.link, '</style.css>; rel=preload; as=invalid, </script.js>; rel=preload; as=script')
 })
 
 test('Should warn on invalid cors (FSTEH002)', async (t) => {
-  t.plan(9)
+  t.plan(8)
   const infos = []
 
   const fastify = Fastify()
@@ -130,13 +128,12 @@ test('Should warn on invalid cors (FSTEH002)', async (t) => {
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
-  t.equal(Array.isArray(infos[0].headers.link), true)
-  t.equal(infos[0].headers.link[0], '</style.css>; rel=preload; as=style')
-  t.equal(infos[0].headers.link[1], '</script.js>; rel=preload; as=script')
+  t.equal(typeof infos[0].headers.link === 'string', true)
+  t.equal(infos[0].headers.link, '</style.css>; rel=preload; as=style, </script.js>; rel=preload; as=script')
 })
 
 test('Should warn on invalid rel (FSTEH003)', async (t) => {
-  t.plan(9)
+  t.plan(8)
   const infos = []
 
   const fastify = Fastify()
@@ -174,13 +171,12 @@ test('Should warn on invalid rel (FSTEH003)', async (t) => {
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
-  t.equal(Array.isArray(infos[0].headers.link), true)
-  t.equal(infos[0].headers.link[0], '</style.css>; rel=invalid; as=style')
-  t.equal(infos[0].headers.link[1], '</script.js>; rel=preload; as=script')
+  t.equal(typeof infos[0].headers.link === 'string', true)
+  t.equal(infos[0].headers.link, '</style.css>; rel=invalid; as=style, </script.js>; rel=preload; as=script')
 })
 
 test('Should not warn on invalid as (FSTEH001) if warn is false', async (t) => {
-  t.plan(6)
+  t.plan(5)
   const infos = []
 
   const fastify = Fastify()
@@ -216,13 +212,12 @@ test('Should not warn on invalid as (FSTEH001) if warn is false', async (t) => {
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
-  t.equal(Array.isArray(infos[0].headers.link), true)
-  t.equal(infos[0].headers.link[0], '</style.css>; rel=preload; as=invalid')
-  t.equal(infos[0].headers.link[1], '</script.js>; rel=preload; as=script')
+  t.equal(typeof infos[0].headers.link === 'string', true)
+  t.equal(infos[0].headers.link, '</style.css>; rel=preload; as=invalid, </script.js>; rel=preload; as=script')
 })
 
 test('Should not warn on invalid cors (FSTEH002) if warn is false', async (t) => {
-  t.plan(6)
+  t.plan(5)
   const infos = []
 
   const fastify = Fastify()
@@ -258,13 +253,12 @@ test('Should not warn on invalid cors (FSTEH002) if warn is false', async (t) =>
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
-  t.equal(Array.isArray(infos[0].headers.link), true)
-  t.equal(infos[0].headers.link[0], '</style.css>; rel=preload; as=style')
-  t.equal(infos[0].headers.link[1], '</script.js>; rel=preload; as=script')
+  t.equal(typeof infos[0].headers.link === 'string', true)
+  t.equal(infos[0].headers.link, '</style.css>; rel=preload; as=style, </script.js>; rel=preload; as=script')
 })
 
 test('Should not warn on invalid rel (FSTEH003) if warn is false', async (t) => {
-  t.plan(6)
+  t.plan(5)
   const infos = []
 
   const fastify = Fastify()
@@ -300,7 +294,6 @@ test('Should not warn on invalid rel (FSTEH003) if warn is false', async (t) => 
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
-  t.equal(Array.isArray(infos[0].headers.link), true)
-  t.equal(infos[0].headers.link[0], '</style.css>; rel=invalid; as=style')
-  t.equal(infos[0].headers.link[1], '</script.js>; rel=preload; as=script')
+  t.equal(typeof infos[0].headers.link === 'string', true)
+  t.equal(infos[0].headers.link, '</style.css>; rel=invalid; as=style, </script.js>; rel=preload; as=script')
 })

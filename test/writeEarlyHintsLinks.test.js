@@ -35,7 +35,7 @@ test('Should not add Early Hints', async (t) => {
 })
 
 test('Should add Early Hints headers', async (t) => {
-  t.plan(6)
+  t.plan(5)
   const infos = []
 
   const fastify = Fastify()
@@ -66,7 +66,6 @@ test('Should add Early Hints headers', async (t) => {
   t.equal(infos.length, 1)
   t.equal(infos[0].statusCode, 103)
   t.equal(typeof infos[0].headers === 'object', true)
-  t.equal(Array.isArray(infos[0].headers.link), true)
-  t.equal(infos[0].headers.link[0], '</style.css>; rel=preload; as=style')
-  t.equal(infos[0].headers.link[1], '</script.js>; rel=preload; as=script')
+  t.equal(typeof infos[0].headers.link === 'string', true)
+  t.equal(infos[0].headers.link, '</style.css>; rel=preload; as=style, </script.js>; rel=preload; as=script')
 })
