@@ -86,3 +86,5 @@ module.exports = fp(fastifyEarlyHints, {
   fastify: '4.x',
   name: '@fastify/early-hints'
 })
+module.exports.default = fastifyEarlyHints
+module.exports.fastifyEarlyHints = fastifyEarlyHints
