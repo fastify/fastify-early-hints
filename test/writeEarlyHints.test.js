@@ -3,7 +3,7 @@
 const { test } = require('tap')
 const Fastify = require('fastify')
 const eh = require('../index')
-const { Client } = require('undici')
+const { Client, buildConnector } = require('undici')
 const { promisify } = require('util')
 const sleep = promisify(setTimeout)
 
@@ -34,6 +34,57 @@ test('Should not add Early Hints', async (t) => {
   })
   await body.dump()
   t.equal(infos.length, 0)
+})
+
+test('Should have the 103 Early Hints response', async (t) => {
+  t.plan(1)
+  const payload = { hello: 'world' }
+
+  const fastify = Fastify()
+  t.teardown(fastify.close.bind(fastify))
+
+  fastify.register(eh)
+  fastify.get('/', async (_, reply) => {
+    await reply.writeEarlyHints({
+      Link: '</style.css>; rel=preload; as=style'
+    })
+    return payload
+  })
+  await fastify.listen({ port: 0 })
+
+  const connector = buildConnector({ rejectUnauthorized: false })
+
+  let data = ''
+  const client = new Client(
+    `http://localhost:${fastify.server.address().port}`,
+    {
+      keepAliveTimeout: 10,
+      keepAliveMaxTimeout: 10,
+      connect (opts, cb) {
+        connector(opts, (err, socket) => {
+          if (err) {
+            cb(err)
+          } else {
+            socket.on('data', (d) => {
+              data += d
+            })
+            cb(null, socket)
+          }
+        })
+      }
+    }
+  )
+
+  t.teardown(client.close.bind(client))
+
+  await client.request({
+    method: 'GET',
+    path: '/'
+  })
+
+  const lines = data.split('\r\n')
+
+  t.equal(lines[0], 'HTTP/1.1 103 Early Hints')
 })
 
 test('Should add Early Hints headers - object', async (t) => {
