@@ -3,7 +3,7 @@
 const fp = require('fastify-plugin')
 const formatEntry = require('./lib/formatEntry')
 const CRLF = '\r\n'
-const EarlyHints = `HTTP/1.1 103 Early Hint${CRLF}`
+const EarlyHints = `HTTP/1.1 103 Early Hints${CRLF}`
 
 function fastifyEarlyHints (fastify, opts, next) {
   if (fastify.initialConfig.http2 === true) {
