@@ -4,7 +4,7 @@ const { test } = require('tap')
 const Fastify = require('fastify')
 const eh = require('../index')
 const { Client, buildConnector } = require('undici')
-const { promisify } = require('util')
+const { promisify } = require('node:util')
 const sleep = promisify(setTimeout)
 
 test('Should not add Early Hints', async (t) => {
