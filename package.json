@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "description": "Fastify Early Hints",
   "main": "index.js",
+  "type": "commonjs",
   "types": "types/index.d.ts",
   "scripts": {
     "lint": "npm run lint:standard && npm run lint:typescript",
