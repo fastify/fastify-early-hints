@@ -33,7 +33,7 @@
   "homepage": "https://github.com/fastify/fastify-early-hints#readme",
   "dependencies": {
     "fastify-plugin": "^4.0.0",
-    "process-warning": "^2.0.0"
+    "process-warning": "^3.0.0"
   },
   "devDependencies": {
     "@fastify/pre-commit": "^2.0.2",
