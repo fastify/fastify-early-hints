@@ -28,7 +28,7 @@ declare namespace fastifyEarlyHints {
 declare module 'fastify' {
   interface FastifyReply { // eslint-disable-line no-unused-vars
     writeEarlyHints: (headers: Record<string, string | string[]> | { name: string, value: string }[]) => Promise<void>;
-    writeEarlyHintsLinks: (content: string[] | fastifyEarlyHints.EarlyHintItem[]) => Promise<void>;
+    writeEarlyHintsLinks: (content: (string | fastifyEarlyHints.EarlyHintItem)[]) => Promise<void>;
   }
 }
 
