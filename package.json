@@ -11,7 +11,7 @@
     "lint:standard": "standard",
     "lint:typescript": "standard --parser @typescript-eslint/parser --plugin @typescript-eslint/eslint-plugin types/*.ts",
     "test": "npm run test:unit && npm run test:typescript",
-    "test:coverage": "tap --cov --coverage-report=html test",
+    "test:coverage": "tap --coverage-report=html test",
     "test:typescript": "tsd",
     "test:unit": "tap"
   },
@@ -32,21 +32,21 @@
   },
   "homepage": "https://github.com/fastify/fastify-early-hints#readme",
   "dependencies": {
-    "fastify-plugin": "^4.0.0",
-    "process-warning": "^2.0.0"
+    "fastify-plugin": "^4.5.1",
+    "process-warning": "^3.0.0"
   },
   "devDependencies": {
-    "@fastify/pre-commit": "^2.0.2",
-    "@types/node": "^20.1.0",
-    "@typescript-eslint/eslint-plugin": "^7.0.0",
-    "@typescript-eslint/parser": "^7.0.2",
-    "autocannon": "^7.10.0",
+    "@fastify/pre-commit": "^2.1.0",
+    "@types/node": "^20.11.30",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "@typescript-eslint/parser": "^7.3.1",
+    "autocannon": "^7.15.0",
     "benchmark": "^2.1.4",
-    "fastify": "^4.0.0",
-    "standard": "^17.0.0",
-    "tap": "^16.0.0",
-    "tsd": "^0.30.0",
-    "undici": "^5.10.0"
+    "fastify": "^4.26.2",
+    "standard": "^17.1.0",
+    "tap": "^18.7.1",
+    "tsd": "^0.30.7",
+    "undici": "^6.10.1"
   },
   "pre-commit": [
     "lint",
